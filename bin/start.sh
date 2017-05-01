@@ -3,7 +3,8 @@ cd `dirname $0`
 BIN_DIR=`pwd`
 cd ..
 DEPLOY_DIR=`pwd`
-
+LOGS_DIR=$DEPLOY_DIR/logs
+STDOUT_FILE=$LOGS_DIR/stdout.log
 SERVER_NAME=`basename "$PWD"`
 
 if [ "$1" = "jprofiler" ]; then
@@ -25,5 +26,9 @@ fi
 
 export JAVA_OPTS
 
-nohup java $JAVA_OPTS $JAVA_JMX_OPTS $JAVA_MEM_OPTS -jar /usr/local/jetty9/start.jar jetty.base=$DEPLOY_DIR &
+nohup java $JAVA_OPTS $JAVA_JMX_OPTS $JAVA_MEM_OPTS -jar /usr/local/jetty9/start.jar jetty.base=$DEPLOY_DIR > $STDOUT_FILE 2>&1 &
 
+echo "OK!"
+PIDS=`ps -f | grep java | grep "$DEPLOY_DIR" | awk '{print $2}'`
+echo "PID: $PIDS"
+echo "STDOUT: $STDOUT_FILE"
